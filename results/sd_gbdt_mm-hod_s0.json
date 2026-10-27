@@ -1,0 +1,22 @@
+{
+ "name": "sd_gbdt_mm-hod_s0",
+ "args": {
+  "ds": "sd",
+  "method": "gbdt",
+  "views": "mm,hod",
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.25565282906150977,
+  "rmse": 116.87404048896086,
+  "viol": 1.318969779563173e-08,
+  "n": 11016
+ },
+ "train_time": 93.88463234901428,
+ "infer_time": 0.2589418888092041,
+ "n_test_cells": 11016
+}

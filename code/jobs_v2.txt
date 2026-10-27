@@ -1,0 +1,88 @@
+# main comparison
+train.py --ds cn31 --variant granite --seed 0
+train.py --ds cn31 --variant posthoc --seed 0
+train.py --ds cn31 --variant none --seed 0
+train.py --ds cn31 --variant n2 --seed 0
+train.py --ds cn31 --variant granite --seed 1
+train.py --ds cn31 --variant posthoc --seed 1
+train.py --ds cn31 --variant none --seed 1
+train.py --ds cn31 --variant n2 --seed 1
+train.py --ds cn31 --variant granite --seed 2
+train.py --ds cn31 --variant posthoc --seed 2
+train.py --ds cn31 --variant none --seed 2
+train.py --ds cn31 --variant n2 --seed 2
+train.py --ds sd --variant granite --seed 0
+train.py --ds sd --variant posthoc --seed 0
+train.py --ds sd --variant none --seed 0
+train.py --ds sd --variant n2 --seed 0
+train.py --ds sd --variant granite --seed 1
+train.py --ds sd --variant posthoc --seed 1
+train.py --ds sd --variant none --seed 1
+train.py --ds sd --variant n2 --seed 1
+train.py --ds sd --variant granite --seed 2
+train.py --ds sd --variant posthoc --seed 2
+train.py --ds sd --variant none --seed 2
+train.py --ds sd --variant n2 --seed 2
+# ablations
+train.py --ds cn31 --variant e2e --seed 0
+train.py --ds cn31 --variant nochmp --seed 0
+train.py --ds cn31 --variant noent --seed 0
+train.py --ds cn31 --variant notemp --seed 0
+train.py --ds cn31 --variant e2e --seed 1
+train.py --ds cn31 --variant nochmp --seed 1
+train.py --ds cn31 --variant noent --seed 1
+train.py --ds cn31 --variant notemp --seed 1
+train.py --ds cn31 --variant e2e --seed 2
+train.py --ds cn31 --variant nochmp --seed 2
+train.py --ds cn31 --variant noent --seed 2
+train.py --ds cn31 --variant notemp --seed 2
+train.py --ds sd --variant e2e --seed 0
+train.py --ds sd --variant nochmp --seed 0
+train.py --ds sd --variant noent --seed 0
+train.py --ds sd --variant notemp --seed 0
+train.py --ds sd --variant e2e --seed 1
+train.py --ds sd --variant nochmp --seed 1
+train.py --ds sd --variant noent --seed 1
+train.py --ds sd --variant notemp --seed 1
+train.py --ds sd --variant e2e --seed 2
+train.py --ds sd --variant nochmp --seed 2
+train.py --ds sd --variant noent --seed 2
+train.py --ds sd --variant notemp --seed 2
+# lambda sensitivity
+train.py --ds cn31 --variant granite --lam 0.3 --tag _lam0.3
+train.py --ds sd --variant granite --lam 0.3 --tag _lam0.3
+train.py --ds cn31 --variant granite --lam 3 --tag _lam3
+train.py --ds sd --variant granite --lam 3 --tag _lam3
+# view configurations
+train.py --ds cn31 --variant granite --views pm,nh
+baselines.py --ds cn31 --method me --views pm,nh
+baselines.py --ds cn31 --method prof --views pm,nh
+baselines.py --ds cn31 --method gbdt --views pm,nh
+train.py --ds cn31 --variant granite --views pd,rh
+baselines.py --ds cn31 --method me --views pd,rh
+baselines.py --ds cn31 --method prof --views pd,rh
+baselines.py --ds cn31 --method gbdt --views pd,rh
+train.py --ds cn31 --variant granite --views pw,rh
+baselines.py --ds cn31 --method me --views pw,rh
+baselines.py --ds cn31 --method prof --views pw,rh
+baselines.py --ds cn31 --method gbdt --views pw,rh
+train.py --ds cn31 --variant granite --views pm,rh,nh
+baselines.py --ds cn31 --method me --views pm,rh,nh
+baselines.py --ds cn31 --method prof --views pm,rh,nh
+baselines.py --ds cn31 --method gbdt --views pm,rh,nh
+train.py --ds cn31 --variant granite --views pd,rd
+baselines.py --ds cn31 --method me --views pd,rd
+baselines.py --ds cn31 --method prof --views pd,rd
+baselines.py --ds cn31 --method gbdt --views pd,rd
+train.py --ds sd --variant granite --views dd
+baselines.py --ds sd --method me --views dd
+baselines.py --ds sd --method prof --views dd
+baselines.py --ds sd --method gbdt --views dd
+train.py --ds sd --variant granite --views dd,hod
+baselines.py --ds sd --method me --views dd,hod
+baselines.py --ds sd --method prof --views dd,hod
+baselines.py --ds sd --method gbdt --views dd,hod
+train.py --ds sd --variant granite --views mm,hod
+baselines.py --ds sd --method me --views mm,hod
+baselines.py --ds sd --method prof --views mm,hod
+baselines.py --ds sd --method gbdt --views mm,hod

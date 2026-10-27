@@ -1,0 +1,32 @@
+{
+ "name": "cn31_n2proj_s1",
+ "args": {
+  "ds": "cn31",
+  "variant": "n2",
+  "views": null,
+  "steps": 3000,
+  "bs": 8,
+  "ebs": 8,
+  "L": 744,
+  "lr": 0.001,
+  "d": 96,
+  "layers": 3,
+  "iters": 8,
+  "seed": 1,
+  "dropout": 0.1,
+  "wd": 0.0001,
+  "lam": 1.0,
+  "eval_every": 250,
+  "train_frac": 1.0,
+  "val_counties": 120,
+  "test_counties": 0,
+  "tag": ""
+ },
+ "test": {
+  "wape": 0.01407373224050021,
+  "rmse": 0.8374133535891073,
+  "viol": 1.7394396075953723e-06,
+  "n": 543864
+ },
+ "infer_time": 1.7791352272033691
+}

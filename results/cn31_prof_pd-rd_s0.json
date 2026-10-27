@@ -1,0 +1,22 @@
+{
+ "name": "cn31_prof_pd-rd_s0",
+ "args": {
+  "ds": "cn31",
+  "method": "prof",
+  "views": "pd,rd",
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.01942471778773822,
+  "rmse": 1.3229776003943214,
+  "viol": 1.6183794432996952e-06,
+  "n": 543864
+ },
+ "train_time": 0.48505663871765137,
+ "infer_time": 1.3837800025939941,
+ "n_test_cells": 543864
+}

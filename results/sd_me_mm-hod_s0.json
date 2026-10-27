@@ -1,0 +1,22 @@
+{
+ "name": "sd_me_mm-hod_s0",
+ "args": {
+  "ds": "sd",
+  "method": "me",
+  "views": "mm,hod",
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.3088420674250104,
+  "rmse": 143.13844331573472,
+  "viol": 2.7931124743690723e-08,
+  "n": 11016
+ },
+ "train_time": 9.5367431640625e-07,
+ "infer_time": 0.4799654483795166,
+ "n_test_cells": 11016
+}

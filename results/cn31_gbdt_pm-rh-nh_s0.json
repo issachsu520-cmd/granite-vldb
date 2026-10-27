@@ -1,0 +1,22 @@
+{
+ "name": "cn31_gbdt_pm-rh-nh_s0",
+ "args": {
+  "ds": "cn31",
+  "method": "gbdt",
+  "views": "pm,rh,nh",
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.02412690720689258,
+  "rmse": 1.3456292028246417,
+  "viol": 1.950107852002562e-06,
+  "n": 543864
+ },
+ "train_time": 591.1791286468506,
+ "infer_time": 6.675683498382568,
+ "n_test_cells": 543864
+}

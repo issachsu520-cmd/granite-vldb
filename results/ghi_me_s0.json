@@ -1,0 +1,22 @@
+{
+ "name": "ghi_me_s0",
+ "args": {
+  "ds": "ghi",
+  "method": "me",
+  "views": null,
+  "ebs": 48,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.023255392246664956,
+  "rmse": 10.125952224265871,
+  "viol": 5.9935523078460855e-06,
+  "n": 347738040
+ },
+ "train_time": 1.430511474609375e-06,
+ "infer_time": 211.24480628967285,
+ "n_test_cells": 347738040
+}

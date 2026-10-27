@@ -1,0 +1,19 @@
+# Pre-submission additions (regression baselines, one worker).
+# E3: residual target and larger trees, selected on validation WAPE
+baselines.py --ds sd --method gbdtr --split val
+baselines.py --ds sd --method gbdtr2 --split val
+baselines.py --ds sd --method gbdt2 --split val
+baselines.py --ds cn31 --method gbdt --split val
+baselines.py --ds cn31 --method gbdtr --split val
+baselines.py --ds cn31 --method gbdtr2 --split val
+baselines.py --ds cn31 --method gbdt2 --split val
+baselines.py --ds sd --method gbdtr
+baselines.py --ds sd --method gbdtr2
+baselines.py --ds sd --method gbdt2
+baselines.py --ds sd --method lrr
+baselines.py --ds cn31 --method gbdtr
+baselines.py --ds cn31 --method gbdtr2
+baselines.py --ds cn31 --method gbdt2
+baselines.py --ds cn31 --method lrr
+# TS-GHI full test with the residual target (about three hours of CPU)
+baselines.py --ds ghi --method gbdtr

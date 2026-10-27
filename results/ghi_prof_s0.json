@@ -1,0 +1,22 @@
+{
+ "name": "ghi_prof_s0",
+ "args": {
+  "ds": "ghi",
+  "method": "prof",
+  "views": null,
+  "ebs": 48,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.02298711354052066,
+  "rmse": 10.065251446501234,
+  "viol": 8.814047511538361e-06,
+  "n": 347738040
+ },
+ "train_time": 2.1457672119140625e-06,
+ "infer_time": 735.2689275741577,
+ "n_test_cells": 347738040
+}

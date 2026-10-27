@@ -1,0 +1,37 @@
+# Pre-submission additions (GPU, one worker).
+# E1: N^2-Norm networks projected onto every view at test time
+eval_proj.py cn31_n2_s0
+eval_proj.py cn31_n2_s1
+eval_proj.py cn31_n2_s2
+eval_proj.py sd_n2_s0
+eval_proj.py sd_n2_s1
+eval_proj.py sd_n2_s2
+# E5: three seeds for the validation-selected lambda on CN31
+train.py --ds cn31 --variant granite --lam 3 --tag _lam3 --seed 1
+train.py --ds cn31 --variant granite --lam 3 --tag _lam3 --seed 2
+# E5: three seeds for GRANITE under every release design
+train.py --ds cn31 --variant granite --views pm,nh --seed 1
+train.py --ds cn31 --variant granite --views pm,nh --seed 2
+train.py --ds cn31 --variant granite --views pw,rh --seed 1
+train.py --ds cn31 --variant granite --views pw,rh --seed 2
+train.py --ds cn31 --variant granite --views pd,rh --seed 1
+train.py --ds cn31 --variant granite --views pd,rh --seed 2
+train.py --ds cn31 --variant granite --views pd,rd --seed 1
+train.py --ds cn31 --variant granite --views pd,rd --seed 2
+train.py --ds cn31 --variant granite --views pm,rh,nh --seed 1
+train.py --ds cn31 --variant granite --views pm,rh,nh --seed 2
+train.py --ds sd --variant granite --views dd --seed 1
+train.py --ds sd --variant granite --views dd --seed 2
+train.py --ds sd --variant granite --views dd,hod --seed 1
+train.py --ds sd --variant granite --views dd,hod --seed 2
+train.py --ds sd --variant granite --views mm,hod --seed 1
+train.py --ds sd --variant granite --views mm,hod --seed 2
+# E1 on the full TS-GHI test
+eval_proj.py ghi_n2_s0
+# more seeds on the full TS-GHI test (about one hour each)
+train.py --ds ghi --variant e2e --seed 1 --tag _full
+train.py --ds ghi --variant posthoc --seed 1
+train.py --ds ghi --variant e2e --seed 2 --tag _full
+train.py --ds ghi --variant posthoc --seed 2
+train.py --ds ghi --variant granite --seed 1
+train.py --ds ghi --variant granite --seed 2

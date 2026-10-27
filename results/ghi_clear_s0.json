@@ -1,0 +1,22 @@
+{
+ "name": "ghi_clear_s0",
+ "args": {
+  "ds": "ghi",
+  "method": "clear",
+  "views": null,
+  "ebs": 48,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.023041694680885128,
+  "rmse": 10.116679882901995,
+  "viol": 8.108923710615292e-06,
+  "n": 347738040
+ },
+ "train_time": 1.430511474609375e-06,
+ "infer_time": 205.69568872451782,
+ "n_test_cells": 347738040
+}

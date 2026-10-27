@@ -1,0 +1,8 @@
+data/
+figs/
+tables/
+results/logs/
+results/*.pt
+results/*.npy
+__pycache__/
+*.pyc

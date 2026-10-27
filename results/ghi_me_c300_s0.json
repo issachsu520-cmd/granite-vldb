@@ -1,0 +1,22 @@
+{
+ "name": "ghi_me_c300_s0",
+ "args": {
+  "ds": "ghi",
+  "method": "me",
+  "views": null,
+  "ebs": 48,
+  "test_counties": 300,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.0250772967532122,
+  "rmse": 10.693838845678142,
+  "viol": 3.925092296536538e-06,
+  "n": 37747800
+ },
+ "train_time": 1.9073486328125e-06,
+ "infer_time": 35.48266553878784,
+ "n_test_cells": 37747800
+}

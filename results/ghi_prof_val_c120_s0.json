@@ -1,0 +1,22 @@
+{
+ "name": "ghi_prof_val_c120_s0",
+ "args": {
+  "ds": "ghi",
+  "method": "prof",
+  "views": null,
+  "ebs": 48,
+  "test_counties": 120,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "val"
+ },
+ "test": {
+  "wape": 0.021449036832070417,
+  "rmse": 10.777519695943445,
+  "viol": 1.5284706202977274e-06,
+  "n": 7571592
+ },
+ "train_time": 1.430511474609375e-06,
+ "infer_time": 13.650022506713867,
+ "n_test_cells": 7571592
+}

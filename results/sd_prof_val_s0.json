@@ -1,0 +1,21 @@
+{
+ "name": "sd_prof_val_s0",
+ "args": {
+  "ds": "sd",
+  "method": "prof",
+  "views": null,
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "val"
+ },
+ "test": {
+  "wape": 0.32913750410079956,
+  "rmse": 130.26455785177194,
+  "viol": 4.487734813985451e-09
+ },
+ "train_time": 0.0010714530944824219,
+ "infer_time": 0.435748815536499,
+ "n_test_cells": 8664
+}

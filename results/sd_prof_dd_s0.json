@@ -1,0 +1,22 @@
+{
+ "name": "sd_prof_dd_s0",
+ "args": {
+  "ds": "sd",
+  "method": "prof",
+  "views": "dd",
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.3016551940385164,
+  "rmse": 131.87044443865076,
+  "viol": 0.0,
+  "n": 11016
+ },
+ "train_time": 0.005673885345458984,
+ "infer_time": 0.4468996524810791,
+ "n_test_cells": 11016
+}

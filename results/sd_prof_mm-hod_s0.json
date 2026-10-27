@@ -1,0 +1,22 @@
+{
+ "name": "sd_prof_mm-hod_s0",
+ "args": {
+  "ds": "sd",
+  "method": "prof",
+  "views": "mm,hod",
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.30884206740690134,
+  "rmse": 143.13844331573472,
+  "viol": 2.3497612879612827e-08,
+  "n": 11016
+ },
+ "train_time": 0.0013530254364013672,
+ "infer_time": 0.580662727355957,
+ "n_test_cells": 11016
+}

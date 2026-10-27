@@ -1,0 +1,22 @@
+{
+ "name": "cn31_me_pm-nh_s0",
+ "args": {
+  "ds": "cn31",
+  "method": "me",
+  "views": "pm,nh",
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.05256881694554928,
+  "rmse": 2.7835797653464587,
+  "viol": 1.9895507979132532e-06,
+  "n": 543864
+ },
+ "train_time": 2.1457672119140625e-06,
+ "infer_time": 1.3217413425445557,
+ "n_test_cells": 543864
+}

@@ -1,0 +1,20 @@
+{
+ "name": "sd_gbdt_s0",
+ "args": {
+  "ds": "sd",
+  "method": "gbdt",
+  "views": null,
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000
+ },
+ "test": {
+  "wape": 0.19877441227436066,
+  "rmse": 94.50319587453691,
+  "viol": 3.228148382640451e-09
+ },
+ "train_time": 9.078320741653442,
+ "infer_time": 0.12526702880859375,
+ "n_test_cells": 11016
+}

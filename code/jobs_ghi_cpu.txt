@@ -1,0 +1,6 @@
+baselines.py --ds ghi --method prof
+baselines.py --ds ghi --method me --test_counties 300
+baselines.py --ds ghi --method clear --test_counties 300
+baselines.py --ds ghi --method prof --test_counties 300
+baselines.py --ds ghi --method gbdt
+baselines.py --ds ghi --method gbdt --test_counties 300

@@ -1,0 +1,22 @@
+{
+ "name": "cn31_me_pd-rh_s0",
+ "args": {
+  "ds": "cn31",
+  "method": "me",
+  "views": "pd,rh",
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.031738468656888716,
+  "rmse": 1.5735861704669478,
+  "viol": 1.0542265966147417e-06,
+  "n": 543864
+ },
+ "train_time": 9.5367431640625e-07,
+ "infer_time": 8.203716278076172,
+ "n_test_cells": 543864
+}

@@ -1,0 +1,20 @@
+{
+ "name": "cn31_lr_s0",
+ "args": {
+  "ds": "cn31",
+  "method": "lr",
+  "views": null,
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000
+ },
+ "test": {
+  "wape": 0.044522058218717575,
+  "rmse": 2.8199722650408785,
+  "viol": 1.993838473525555e-06
+ },
+ "train_time": 3.8198187351226807,
+ "infer_time": 0.5238392353057861,
+ "n_test_cells": 543864
+}

@@ -1,0 +1,20 @@
+{
+ "name": "sd_me_s0",
+ "args": {
+  "ds": "sd",
+  "method": "me",
+  "views": null,
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000
+ },
+ "test": {
+  "wape": 0.2902089059352875,
+  "rmse": 130.45006724250084,
+  "viol": 1.077499644461275e-08
+ },
+ "train_time": 1.1920928955078125e-06,
+ "infer_time": 0.2873518466949463,
+ "n_test_cells": 11016
+}

@@ -1,0 +1,2 @@
+train.py --ds ghi --variant n2 --seed 0
+eval_sub.py ghi_n2_s0 300

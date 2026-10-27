@@ -1,0 +1,14 @@
+train.py --ds ghi --variant granite --seed 0
+train.py --ds ghi --variant posthoc --seed 0
+train.py --ds ghi --variant none --seed 0
+train.py --ds ghi --variant n2 --seed 0
+train.py --ds ghi --variant e2e --seed 0
+train.py --ds ghi --variant granite --seed 1
+train.py --ds ghi --variant nochmp --seed 0
+train.py --ds ghi --variant noent --seed 0
+train.py --ds ghi --variant granite --seed 2
+train.py --ds ghi --variant granite --train_frac 0.1 --tag _tf0.1
+eval_sub.py ghi_granite_s0 300
+eval_sub.py ghi_posthoc_s0 300
+eval_sub.py ghi_none_s0 300
+eval_sub.py ghi_n2_s0 300

@@ -1,0 +1,7 @@
+# TS-GHI full test: extra seeds for N^2-Norm (raw and projected) and the unconstrained network
+train.py --ds ghi --variant n2 --seed 1
+train.py --ds ghi --variant n2 --seed 2
+eval_proj.py ghi_n2_s1
+eval_proj.py ghi_n2_s2
+train.py --ds ghi --variant none --seed 1
+train.py --ds ghi --variant none --seed 2

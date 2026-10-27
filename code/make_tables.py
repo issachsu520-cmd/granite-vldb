@@ -11,8 +11,21 @@ NAMES = {'me': 'MaxEnt / min-norm', 'prof': 'Profile + projection', 'clear': 'So
          'none': 'Unconstrained network', 'posthoc': 'Network + post-hoc proj.', 'e2e': '\\sys w/o seed loss',
          'nochmp': '\\sys w/o CHMP', 'noent': '\\sys w/o entity attn.', 'notemp': '\\sys w/o temporal attn.',
          'granite': '\\sys ($\\lambda{=}1$)', 'ens': '\\sys ($\\lambda{=}1$, 3-seed ens.)',
-         'ensph': 'Network + post-hoc proj.\\ (3-seed ens.)', 'gval': '\\sys ($\\lambda$ chosen on val.)'}
+         'ensph': 'Network + post-hoc proj.\\ (3-seed ens.)', 'gval': '\\sys ($\\lambda$ chosen on val.)',
+         'n2proj': '$N^2$-Norm + post-hoc proj.'}
 INCOHERENT = ('none', 'n2')
+FAMILIES = {'gbdt': ['gbdt', 'gbdt2', 'gbdtr', 'gbdtr2'],  # raw / residual target x 300 / 600 trees
+            'lr': ['lr', 'lrr']}                          # raw / residual target
+
+
+def best_variant(ds, fam):
+    """Variant of a regressor family with the lowest validation WAPE (among those run on validation and test)."""
+    val = {}
+    for m in FAMILIES[fam]:
+        f, t = os.path.join(RES, f"{ds}_{m}_val_s0.json"), os.path.join(RES, f"{ds}_{m}_s0.json")
+        if os.path.exists(f) and os.path.exists(t):
+            val[m] = json.load(open(f))['test']['wape']
+    return min(val, key=val.get) if val else fam
 
 
 def load(ds, m, views=None):
@@ -48,7 +61,7 @@ def cell(rows, key, fmt, scale=1.0):
 
 
 def main_table():
-    methods = ['me', 'prof', 'clear', 'lr', 'gbdt', 'n2', 'none', 'posthoc', 'ensph', 'granite', 'ens', 'gval']
+    methods = ['me', 'prof', 'clear', 'lr', 'gbdt', 'n2', 'none', 'posthoc', 'n2proj', 'ensph', 'granite', 'ens', 'gval']
     GVAL = {'cn31': 'granite_lam3', 'sd': 'e2e', 'ghi': 'e2e_full'}  # lambda = 3, 0, 0 (best validation WAPE)
     ENS = {'ens': 'granite', 'ensph': 'posthoc'}
     table, summary = [], {}
@@ -61,7 +74,7 @@ def main_table():
             elif m == 'gval':
                 rows = load(ds, GVAL[ds])
             else:
-                rows = load(ds, m)
+                rows = load(ds, best_variant(ds, m) if m in FAMILIES else m)
             if rows:
                 summary[(ds, m)] = np.mean([r['test']['wape'] for r in rows])
             if ds == 'sd':
@@ -114,11 +127,7 @@ def views_table():
         v = None if vw == default[ds] else vw
         row = ['\\dataset{CN31}' if ds == 'cn31' else '\\dataset{SD}', desc]
         for m in ['me', 'prof', 'gbdt', 'granite']:
-            rows = load(ds, m, v)
-            if m == 'granite' and v is not None:
-                rows = rows[:1]
-            if m == 'granite' and v is None:
-                rows = [r for r in rows if r['args']['seed'] == 0]
+            rows = load(ds, best_variant(ds, m) if m in FAMILIES else m, v)
             row += [cell(rows, 'wape', '{:.2f}', 100)]
         lines.append(' & '.join(row) + ' \\\\')
     open(os.path.join(OUT, 'views_rows.tex'), 'w').write('\n'.join(lines) + '\n')
@@ -134,8 +143,9 @@ def downstream_table():
             continue
         d = pd.read_csv(f).set_index('method')
         lines = []
-        for m in [x for x in ['me', 'prof', 'clear', 'gbdt', 'n2', 'none', 'posthoc', 'granite'] if x in d.index]:
-            vals = [fmt.format(d.loc[m, c] * s) for c, s, fmt in cols]
+        for m in [x for x in ['me', 'prof', 'clear', 'gbdt', 'n2', 'none', 'posthoc', 'n2proj', 'granite'] if x in d.index]:
+            vals = [fmt.format(d.loc[m, c] * s) + ('\\,{\\scriptsize$\\pm$' + fmt.format(d.loc[m, c + '_std'] * s) + '}'
+                                                    if d.loc[m, 'n_seeds'] > 1 else '') for c, s, fmt in cols]
             vals += [''] * (4 - len(vals))
             lines.append(' & '.join([NAMES[m]] + vals) + ' \\\\')
         open(os.path.join(OUT, f'downstream_{ds}_rows.tex'), 'w').write('\n'.join(lines) + '\n')

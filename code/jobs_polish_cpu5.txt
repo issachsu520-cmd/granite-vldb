@@ -1,0 +1,6 @@
+# Release-design study with the GBDT variant selected on validation for CN31 (gbdtr2)
+baselines.py --ds cn31 --method gbdtr2 --views pm,nh
+baselines.py --ds cn31 --method gbdtr2 --views pw,rh
+baselines.py --ds cn31 --method gbdtr2 --views pd,rh
+baselines.py --ds cn31 --method gbdtr2 --views pd,rd
+baselines.py --ds cn31 --method gbdtr2 --views pm,rh,nh

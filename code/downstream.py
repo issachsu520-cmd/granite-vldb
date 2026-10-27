@@ -10,9 +10,10 @@ import glob, json, os, sys
 import numpy as np, pandas as pd
 from train import get_ds, eval_specs, RES
 from paths import DATA
+from make_tables import FAMILIES, best_variant  # Ridge / GBDT variant selected on validation
 
-METHODS = {'cn31': ['me', 'prof', 'lr', 'gbdt', 'none', 'posthoc', 'n2', 'granite'],
-           'sd': ['me', 'prof', 'lr', 'gbdt', 'none', 'posthoc', 'n2', 'granite'],
+METHODS = {'cn31': ['me', 'prof', 'lr', 'gbdt', 'none', 'posthoc', 'n2', 'n2proj', 'granite'],
+           'sd': ['me', 'prof', 'lr', 'gbdt', 'none', 'posthoc', 'n2', 'n2proj', 'granite'],
            'ghi': ['me', 'clear', 'gbdt', 'none', 'posthoc', 'n2', 'granite']}
 
 
@@ -81,7 +82,7 @@ def main(dsn):
     for m in METHODS[dsn]:
         per_seed = []
         for seed in range(3):
-            P = load_preds(dsn, m, seed)
+            P = load_preds(dsn, best_variant(dsn, m) if m in FAMILIES else m, seed)
             if P is None:
                 continue
             res = []

@@ -20,8 +20,9 @@ def worker(q, lock):
         log = os.path.join(RES, 'logs', os.path.basename(out).replace('.json', '.log'))
         t = time.time()
         with open(log, 'w') as f:
-            subprocess.run([sys.executable, '-u', script] + args, cwd=CODE, stdout=f, stderr=subprocess.STDOUT)
-        print(f"{time.strftime('%H:%M:%S')} done {os.path.basename(out)} in {time.time() - t:.0f}s", flush=True)
+            r = subprocess.run([sys.executable, '-u', script] + args, cwd=CODE, stdout=f, stderr=subprocess.STDOUT)
+        status = 'done' if r.returncode == 0 else f'FAILED (exit {r.returncode})'
+        print(f"{time.strftime('%H:%M:%S')} {status} {os.path.basename(out)} in {time.time() - t:.0f}s", flush=True)
 
 
 def result_name_from(script, args):
@@ -35,7 +36,8 @@ def result_name_from(script, args):
     vs = ('_' + v.replace(',', '-')) if v else ''
     if script == 'baselines.py':
         tc = a.get('--test_counties')
-        return f"{a['--ds']}_{a['--method']}{vs}{('_c' + tc) if tc and tc != '0' else ''}_s0.json"
+        sp = a.get('--split', 'test')
+        return f"{a['--ds']}_{a['--method']}{vs}{'' if sp == 'test' else '_' + sp}{('_c' + tc) if tc and tc != '0' else ''}_s0.json"
     return f"{a['--ds']}_{a.get('--variant', 'granite')}{vs}{a.get('--tag', '')}_s{a.get('--seed', '0')}.json"
 
 

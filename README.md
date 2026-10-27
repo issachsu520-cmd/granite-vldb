@@ -61,6 +61,10 @@ python runner.py jobs_retry.txt 1      # runs that hit GPU out-of-memory on a sh
 python eval_sub.py ghi_e2e_s0 0        # TS-GHI with lambda chosen on validation, full test
 python runner.py jobs_polish.txt 1     # extra seeds, projected N2-Norm
 python runner.py jobs_polish_cpu.txt 1 # residual-target and larger GBDT/ridge baselines
+python runner.py jobs_polish_cpu2.txt 1 # GBDT on validation (value target, 300 trees)
+python runner.py jobs_polish_cpu4.txt 1 # validation runs for ridge and TS-GHI GBDT variants
+python runner.py jobs_polish_cpu5.txt 1 # release designs with the GBDT variant selected for CN31
+python runner.py jobs_polish_gpu2.txt 1 # TS-GHI extra seeds: N2-Norm (raw, projected), unconstrained
 python bench.py                        # scalability of the coherence layer
 python downstream.py cn31 && python downstream.py sd && python downstream.py ghi
 python make_tables.py && python fig_case.py && python fig_scale.py && python fig_map.py

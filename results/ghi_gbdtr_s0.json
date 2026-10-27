@@ -1,0 +1,22 @@
+{
+ "name": "ghi_gbdtr_s0",
+ "args": {
+  "ds": "ghi",
+  "method": "gbdtr",
+  "views": null,
+  "ebs": 48,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.022775747014357976,
+  "rmse": 9.995640060598713,
+  "viol": 8.814047511538361e-06,
+  "n": 347738040
+ },
+ "train_time": 42.57836031913757,
+ "infer_time": 1063.1842608451843,
+ "n_test_cells": 347738040
+}

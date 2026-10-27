@@ -1,0 +1,22 @@
+{
+ "name": "cn31_gbdt2_val_s0",
+ "args": {
+  "ds": "cn31",
+  "method": "gbdt2",
+  "views": null,
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "val"
+ },
+ "test": {
+  "wape": 0.02242833315346199,
+  "rmse": 1.1665437679073167,
+  "viol": 1.5066901968187778e-06,
+  "n": 271560
+ },
+ "train_time": 138.8562252521515,
+ "infer_time": 4.203648328781128,
+ "n_test_cells": 271560
+}

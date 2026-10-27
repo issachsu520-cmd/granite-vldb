@@ -1,0 +1,11 @@
+# Validation runs so that Ridge and GBDT variants are selected on validation on every dataset
+baselines.py --ds sd --method lr --split val
+baselines.py --ds sd --method lrr --split val
+baselines.py --ds cn31 --method lr --split val
+baselines.py --ds cn31 --method lrr --split val
+baselines.py --ds ghi --method gbdtr --split val
+baselines.py --ds ghi --method gbdt --split val
+baselines.py --ds ghi --method gbdtr2 --split val
+baselines.py --ds ghi --method gbdtr2
+baselines.py --ds ghi --method gbdt2 --split val
+baselines.py --ds ghi --method gbdt2

@@ -1,0 +1,22 @@
+{
+ "name": "sd_lrr_s0",
+ "args": {
+  "ds": "sd",
+  "method": "lrr",
+  "views": null,
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.23327479558140513,
+  "rmse": 108.02562909641806,
+  "viol": 4.362908757566931e-09,
+  "n": 11016
+ },
+ "train_time": 4.163516998291016,
+ "infer_time": 0.2562739849090576,
+ "n_test_cells": 11016
+}

@@ -1,0 +1,22 @@
+{
+ "name": "ghi_gbdtr2_val_s0",
+ "args": {
+  "ds": "ghi",
+  "method": "gbdtr2",
+  "views": null,
+  "ebs": 48,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "val"
+ },
+ "test": {
+  "wape": 0.020769232780354273,
+  "rmse": 10.437101226909741,
+  "viol": 4.840917721265913e-06,
+  "n": 187882344
+ },
+ "train_time": 35.83321189880371,
+ "infer_time": 1240.3159537315369,
+ "n_test_cells": 187882344
+}

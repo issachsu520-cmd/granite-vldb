@@ -1,0 +1,22 @@
+{
+ "name": "cn31_gbdtr2_pd-rh_s0",
+ "args": {
+  "ds": "cn31",
+  "method": "gbdtr2",
+  "views": "pd,rh",
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "test"
+ },
+ "test": {
+  "wape": 0.015436326510595766,
+  "rmse": 0.901197124741744,
+  "viol": 9.230759549276941e-07,
+  "n": 543864
+ },
+ "train_time": 93.43726515769958,
+ "infer_time": 7.527226448059082,
+ "n_test_cells": 543864
+}

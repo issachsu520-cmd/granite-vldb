@@ -1,0 +1,22 @@
+{
+ "name": "cn31_lrr_val_s0",
+ "args": {
+  "ds": "cn31",
+  "method": "lrr",
+  "views": null,
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "val"
+ },
+ "test": {
+  "wape": 0.03792612357420375,
+  "rmse": 1.756322260119927,
+  "viol": 1.7322585429187202e-06,
+  "n": 271560
+ },
+ "train_time": 2.9219093322753906,
+ "infer_time": 0.23282861709594727,
+ "n_test_cells": 271560
+}

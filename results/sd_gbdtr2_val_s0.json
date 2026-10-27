@@ -1,0 +1,22 @@
+{
+ "name": "sd_gbdtr2_val_s0",
+ "args": {
+  "ds": "sd",
+  "method": "gbdtr2",
+  "views": null,
+  "ebs": 8,
+  "test_counties": 0,
+  "n_blocks": 400,
+  "max_cells": 3000000,
+  "split": "val"
+ },
+ "test": {
+  "wape": 0.2487917930521491,
+  "rmse": 102.05401605454279,
+  "viol": 3.8061589640274724e-09,
+  "n": 8664
+ },
+ "train_time": 2436.561585664749,
+ "infer_time": 6.379818916320801,
+ "n_test_cells": 8664
+}

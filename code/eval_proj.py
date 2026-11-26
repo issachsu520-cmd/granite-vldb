@@ -1,3 +1,9 @@
+# Declaration of Originality and Non-Use of Artificial Intelligence
+#
+# The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI
+# technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,
+# data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the
+# integrity of the work.
 """Evaluate a trained N^2-Norm (single-view) model with the full multi-view projection at test time.
 By gauge invariance, projecting its single-view output onto all views equals projecting its seed.
 usage: python eval_proj.py cn31_n2_s0      (writes <ds>_n2proj_s<seed>.json; TS-GHI: full test)"""

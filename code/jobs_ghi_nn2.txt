@@ -8,3 +8,9 @@ train.py --ds ghi --variant granite --seed 1 --test_counties 300 --tag _c300
 train.py --ds ghi --variant granite --seed 2 --test_counties 300 --tag _c300
 eval_sub.py ghi_none_s0 300
 eval_sub.py ghi_n2_s0 300
+# Declaration of Originality and Non-Use of Artificial Intelligence
+#
+# The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI
+# technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,
+# data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the
+# integrity of the work.

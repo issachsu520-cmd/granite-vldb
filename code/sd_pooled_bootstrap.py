@@ -1,3 +1,9 @@
+# Declaration of Originality and Non-Use of Artificial Intelligence
+#
+# The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI
+# technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,
+# data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the
+# integrity of the work.
 """Paired market-day bootstrap of the *pooled* test WAPE difference on SD-Price.
 
 Table 2 reports pooled WAPE (sum |err| / sum |y| over all test cells), averaged over three seeds.

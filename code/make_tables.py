@@ -1,3 +1,9 @@
+# Declaration of Originality and Non-Use of Artificial Intelligence
+#
+# The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI
+# technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,
+# data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the
+# integrity of the work.
 """Collect result JSONs into LaTeX tables for the paper (written to paper/tables/)."""
 import glob, json, os
 import numpy as np, pandas as pd
@@ -5,6 +11,19 @@ from train import get_ds, eval_specs, Scorer, RES
 
 from paths import TABLES as OUT
 os.makedirs(OUT, exist_ok=True)
+DECL = ("% Declaration of Originality and Non-Use of Artificial Intelligence\n"
+        "%\n"
+        "% The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI\n"
+        "% technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,\n"
+        "% data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the\n"
+        "% integrity of the work.\n")
+
+
+def write_rows(name, lines):
+    """Write one LaTeX table fragment; the AI declaration travels with it as a comment."""
+    with open(os.path.join(OUT, name), 'w') as f:
+        f.write('\n'.join(lines) + '\n' + DECL)
+
 DSS = ['cn31', 'sd', 'ghi']
 NAMES = {'me': 'MaxEnt / min-norm', 'prof': 'Profile + projection', 'clear': 'Solar geometry + IPF',
          'lr': 'Ridge + projection', 'gbdt': 'GBDT + projection', 'n2': '$N^2$-Norm (UrbanFM-style)',
@@ -115,7 +134,7 @@ def main_table():
         lines.append(' & '.join(row) + ' \\\\')
         if m in ('gbdt', 'ensph'):
             lines.append('\\midrule')
-    open(os.path.join(OUT, 'main_rows.tex'), 'w').write('\n'.join(lines) + '\n')
+    write_rows('main_rows.tex', lines)
     return summary
 
 
@@ -129,7 +148,7 @@ def ablation_table():
             rows = load(ds, mm)
             row += [cell(rows, 'wape', '{:.2f}' if ds != 'ghi' else '{:.3f}', 100)]
         lines.append(' & '.join(row) + ' \\\\')
-    open(os.path.join(OUT, 'ablation_rows.tex'), 'w').write('\n'.join(lines) + '\n')
+    write_rows('ablation_rows.tex', lines)
 
 
 def views_table():
@@ -147,7 +166,7 @@ def views_table():
             rows = load(ds, best_variant(ds, m) if m in FAMILIES else m, v)
             row += [cell(rows, 'wape', '{:.2f}', 100)]
         lines.append(' & '.join(row) + ' \\\\')
-    open(os.path.join(OUT, 'views_rows.tex'), 'w').write('\n'.join(lines) + '\n')
+    write_rows('views_rows.tex', lines)
 
 
 def downstream_table():
@@ -165,7 +184,7 @@ def downstream_table():
                                                     if d.loc[m, 'n_seeds'] > 1 else '') for c, s, fmt in cols]
             vals += [''] * (4 - len(vals))
             lines.append(' & '.join([NAMES[m]] + vals) + ' \\\\')
-        open(os.path.join(OUT, f'downstream_{ds}_rows.tex'), 'w').write('\n'.join(lines) + '\n')
+        write_rows(f'downstream_{ds}_rows.tex', lines)
 
 
 def appendix_tables():
@@ -193,7 +212,7 @@ def appendix_tables():
                 lines.append(f"{glbl}: {lbl} & " + ' & '.join(vals) + ' \\\\')
             if gtype == 'season':
                 lines.append('\\midrule')
-        open(os.path.join(OUT, 'app_cn31_strata_rows.tex'), 'w').write('\n'.join(lines) + '\n')
+        write_rows('app_cn31_strata_rows.tex', lines)
 
     # 2. Paired statistical tests
     st_p = os.path.join(RES, 'strata_summary.json')
@@ -229,7 +248,7 @@ def appendix_tables():
             pstr = f"{r['wilcoxon_p']:.1e}" if r['wilcoxon_p'] > 0 else "$<10^{-300}$"
             lines.append(f"{unit} & {cmp_lbl} & {r['mean_diff']:+.3f} & [{r['ci95'][0]:+.3f}, {r['ci95'][1]:+.3f}] & "
                          f"{r['wins_a_better']}/{r['total']} ({pstr}) \\\\")
-        open(os.path.join(OUT, 'app_stats_rows.tex'), 'w').write('\n'.join(lines) + '\n')
+        write_rows('app_stats_rows.tex', lines)
 
     # 3. SD strata
     sd_p = os.path.join(RES, 'strata_sd_breakdown.csv')
@@ -247,7 +266,7 @@ def appendix_tables():
                 lines.append(f"{gtex} & " + ' & '.join(vals) + ' \\\\')
             if dim == 'tou':
                 lines.append('\\midrule')
-        open(os.path.join(OUT, 'app_sd_strata_rows.tex'), 'w').write('\n'.join(lines) + '\n')
+        write_rows('app_sd_strata_rows.tex', lines)
 
     # 4. Robustness master tables
     rm_p = os.path.join(RES, 'robustness_master.json')
@@ -266,7 +285,7 @@ def appendix_tables():
                 lines.append(f"Soft penalty ($\\gamma={gam:g}$) & {c['wape']:.2f} & {c['viol']:.1e} & {s['wape']:.2f} & {s['viol']:.1e} \\\\")
         lines.append("\\midrule")
         lines.append(f"\\sys ($\\lambda=1$, hard proj.) & 1.30 & {cn_v:.0e} & 19.38 & {sd_v:.0e} \\\\")
-        open(os.path.join(OUT, 'app_softpen_rows.tex'), 'w').write('\n'.join(lines) + '\n')
+        write_rows('app_softpen_rows.tex', lines)
 
         # Backbones
         bb = {(r['ds'], r['arch'], r['regime']): r for r in rm.get('backbones', [])}
@@ -280,7 +299,7 @@ def appendix_tables():
                              f"{s_gr['wape_mean']:.2f}\\,{{\\scriptsize$\\pm${s_gr['wape_std']:.2f}}} \\\\")
         lines.append("Axial Transformer (ours) & 720K & 1.44\\,{\\scriptsize$\\pm$0.02} & 1.30\\,{\\scriptsize$\\pm$0.02} & "
                      "19.23\\,{\\scriptsize$\\pm$0.42} & 19.38\\,{\\scriptsize$\\pm$0.47} \\\\")
-        open(os.path.join(OUT, 'app_backbone_rows.tex'), 'w').write('\n'.join(lines) + '\n')
+        write_rows('app_backbone_rows.tex', lines)
 
         # Stress tests
         lines = []
@@ -307,7 +326,7 @@ def appendix_tables():
                 lines.append(f"{dslbl} & {int(mf*100)}\\% views masked & {p:.2f} & {ph:.2f} & {gc:.2f} / -- \\\\")
             if ds == 'cn31':
                 lines.append('\\midrule')
-        open(os.path.join(OUT, 'app_stress_rows.tex'), 'w').write('\n'.join(lines) + '\n')
+        write_rows('app_stress_rows.tex', lines)
 
         # Sensitivity
         lines = []
@@ -330,7 +349,7 @@ def appendix_tables():
             if g and p:
                 lines.append(f"Train history & {yr} yr (\\sys / Post-hoc) & {g['wape']:.2f} / {p['wape']:.2f} & -- \\\\")
         lines.append("Train history & 7 yr (\\sys / Post-hoc) & 1.30 / 1.44 & -- \\\\")
-        open(os.path.join(OUT, 'app_sens_rows.tex'), 'w').write('\n'.join(lines) + '\n')
+        write_rows('app_sens_rows.tex', lines)
 
 
 if __name__ == '__main__':

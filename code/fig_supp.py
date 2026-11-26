@@ -1,3 +1,9 @@
+# Declaration of Originality and Non-Use of Artificial Intelligence
+#
+# The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI
+# technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,
+# data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the
+# integrity of the work.
 """Supplementary figures for the Technical Appendix:
   1. supp_cn31_heatmap.pdf: 31 provinces x 24 test months WAPE reduction (GRANITE vs. Post-hoc)
   2. supp_sd_breakdown.pdf: SD-Price stratified by TOU Period and Price Regime

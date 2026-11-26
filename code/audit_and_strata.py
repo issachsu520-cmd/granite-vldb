@@ -1,3 +1,9 @@
+# Declaration of Originality and Non-Use of Artificial Intelligence
+#
+# The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI
+# technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,
+# data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the
+# integrity of the work.
 """Audit exact release violations (fixing the avg-view denominator) and compute
 stratified subgroup metrics, paired bootstrap 95% CIs, and Wilcoxon tests across
 CN31-Load, SD-Price, and TS-GHI.

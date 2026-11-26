@@ -1,3 +1,9 @@
+# Declaration of Originality and Non-Use of Artificial Intelligence
+#
+# The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI
+# technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,
+# data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the
+# integrity of the work.
 """Figure 2: spatial and stratified results, drawn at print size (7.0 x 2.3 in).
 
 (a) TS-GHI: township WAPE reduction of GRANITE (lambda chosen on validation) over MaxEnt, 300 random counties,

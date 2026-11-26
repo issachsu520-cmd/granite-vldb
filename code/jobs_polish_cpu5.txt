@@ -4,3 +4,9 @@ baselines.py --ds cn31 --method gbdtr2 --views pw,rh
 baselines.py --ds cn31 --method gbdtr2 --views pd,rh
 baselines.py --ds cn31 --method gbdtr2 --views pd,rd
 baselines.py --ds cn31 --method gbdtr2 --views pm,rh,nh
+# Declaration of Originality and Non-Use of Artificial Intelligence
+#
+# The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI
+# technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,
+# data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the
+# integrity of the work.

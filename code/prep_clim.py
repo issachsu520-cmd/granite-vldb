@@ -1,3 +1,9 @@
+# Declaration of Originality and Non-Use of Artificial Intelligence
+#
+# The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI
+# technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,
+# data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the
+# integrity of the work.
 """Township climatology from the TS-GHI training period only (local days 2022-01-02 .. 2024-12-31):
 mean irradiance per township x calendar month x local hour. Writes data/township/clim.npy [N, 12, 24]."""
 import os

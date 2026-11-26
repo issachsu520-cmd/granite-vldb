@@ -1,3 +1,9 @@
+# Declaration of Originality and Non-Use of Artificial Intelligence
+#
+# The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI
+# technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,
+# data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the
+# integrity of the work.
 """Re-evaluate a trained TS-GHI model on a fixed subset of counties and save predictions
 (used for downstream queries and maps).  usage: python eval_sub.py ghi_granite_s0 300"""
 import json, os, sys, time

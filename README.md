@@ -89,6 +89,11 @@ and resumed. All experiments in the paper ran on one 16 GB GPU (NVIDIA RTX 5070 
 Python 3.14, PyTorch 2.11 (CUDA 12.8), NumPy 2.5, pandas 2.3, scikit-learn 1.8, SciPy 1.14, pyshp 3.0, CVXPY 1.8
 (SCS 3.2, OSQP 1.1), matplotlib 3.10, openpyxl 3.1. See `requirements.txt`.
 
+## License
+
+This repository is released under the [MIT License](LICENSE). The third-party sources listed under Data are not
+included and remain under their providers' terms.
+
 ## Declaration of Originality and Non-Use of Artificial Intelligence
 
 The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI

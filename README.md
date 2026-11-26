@@ -88,3 +88,14 @@ and resumed. All experiments in the paper ran on one 16 GB GPU (NVIDIA RTX 5070 
 
 Python 3.14, PyTorch 2.11 (CUDA 12.8), NumPy 2.5, pandas 2.3, scikit-learn 1.8, SciPy 1.14, pyshp 3.0, CVXPY 1.8
 (SCS 3.2, OSQP 1.1), matplotlib 3.10, openpyxl 3.1. See `requirements.txt`.
+
+## Declaration of originality and non-use of artificial intelligence
+
+The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI
+technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,
+data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the
+integrity of the work.
+
+The same declaration, word for word, is printed in the manuscript (page 12) and on the last page of the technical
+report (`docs/GRANITE_technical_report.pdf`, page 8).
+

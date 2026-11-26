@@ -67,6 +67,12 @@ def last_acc(y, m):
 
 
 PROG = os.path.join(OUT, 'progress.txt')
+PROG_HEAD = ("# Declaration of Originality and Non-Use of Artificial Intelligence\n"
+             "#\n"
+             "# The authors declare that no Artificial Intelligence (AI) tools, large language models (LLMs), or generative AI\n"
+             "# technologies were used in the conception, drafting, writing, editing, or polishing of this manuscript. All contents,\n"
+             "# data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the\n"
+             "# integrity of the work.\n")
 meta, arr, prev_last = None, None, None
 done = open(PROG).read().split() if os.path.exists(PROG) else []
 if done and os.path.exists(os.path.join(OUT, 'meta.parquet')):
@@ -126,6 +132,8 @@ for k, (y, m) in enumerate(YM):
     arr.flush()
     np.save(os.path.join(OUT, f"prev_last_{y}-{m:02d}.npy"), prev_last)
     with open(PROG, 'a') as fp:
+        if fp.tell() == 0:
+            fp.write(PROG_HEAD)
         fp.write(f"{y}-{m:02d}\n")
     tot = nrec * hours_per[k]
     print(f"{y}-{m:02d} nan={nanc / tot:.4f} max={mx:.1f} mean={sm / max(tot - nanc, 1):.1f} t={time.time() - t0:.0f}s", flush=True)

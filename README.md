@@ -96,6 +96,6 @@ technologies were used in the conception, drafting, writing, editing, or polishi
 data, analyses, and conclusions are entirely the original work of the authors, who take full responsibility for the
 integrity of the work.
 
-The same declaration, word for word, is printed in the manuscript (page 12) and on the last page of the technical
-report (`docs/GRANITE_technical_report.pdf`, page 8).
+The same declaration, word for word, is printed in the manuscript (page 12) and in the front matter of the technical
+report (`docs/GRANITE_technical_report.pdf`, page 1, after the abstract).
 

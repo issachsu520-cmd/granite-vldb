@@ -1,9 +1,10 @@
-"""Figure 5: release design, backbones, and scaling, drawn at print size (7.0 x 2.0 in).
+"""Figure 5: release design, backbones, and scaling, drawn at print size (7.0 x 2.05 in).
 
 (a) CN31 release design: test WAPE of four estimators under six releases (Table 5)
 (b) backbones: WAPE of end-to-end coherent training relative to post-hoc projection, CN31 and SD
 (c) runtime of 50 projection sweeps vs. lattice size: GPU layer, vectorized CPU, conic/QP solvers
-(d) KL violation vs. sweeps for synthetic two- and three-view releases
+(d) GPU runtime of 50 KL sweeps over lattice size N and view count K (3D surface; median of three
+    timed runs after warm-up; results/bench_views.csv from bench_views.py)
 
 Writes paper/figs/views_scale.pdf and submission_package/figures_highres/fig5_views_scale.png.
 """
@@ -13,15 +14,18 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap, Normalize
 
 from train import RES
-from plot_style import (SLATE, CORAL, SAGE, AMBER, IRIS, INK, INK2, MUTED, METHOD, TEXTWIDTH,
-                        apply_style, clean_ax, save)
+from plot_style import (SLATE, CORAL, SAGE, AMBER, IRIS, INK, INK2, MUTED, METHOD, SEQ_BLUE, TEXTWIDTH,
+                        apply_style, clean_ax, style_3d, save)
+
+SEQ = LinearSegmentedColormap.from_list('seq', SEQ_BLUE)
 
 from paths import FIGS as FIG
 HIGH = FIG
 from paths import TABLES
-apply_style(6.5)
+apply_style(6.8)
 
 RELEASES = [  # label, MaxEnt, Profile, GBDT, GRANITE (CN31 rows of tables/views_rows.tex)
     ("P-month, R-hour (default)", 3.70, 2.01, 2.25, 1.30),
@@ -48,10 +52,10 @@ def draw():
     check_releases()
     rm = json.load(open(os.path.join(RES, 'robustness_master.json')))
     scale = pd.read_csv(os.path.join(RES, 'bench_scaling.csv'))
-    conv = pd.read_csv(os.path.join(RES, 'bench_convergence.csv'))
 
-    fig, axs = plt.subplots(1, 4, figsize=(TEXTWIDTH, 2.0),
-                            gridspec_kw=dict(wspace=0.55, width_ratios=[1.35, 0.95, 1.25, 0.8]))
+    fig, axs = plt.subplots(1, 4, figsize=(TEXTWIDTH, 2.05),
+                            gridspec_kw=dict(wspace=0.55, width_ratios=[1.3, 0.92, 1.18, 1.05], left=0.17,
+                                             right=0.985, top=0.88, bottom=0.19))
 
     # (a) release design
     ax = axs[0]
@@ -142,24 +146,42 @@ def draw():
     ax.set_title('(c) Projection runtime', loc='left', pad=11)
     clean_ax(ax, grid_axis='y')
 
-    # (d) convergence
-    ax = axs[3]
-    for nv, col, mk in [(2, SLATE, 'o'), (3, SAGE, 's')]:
-        g = conv[conv.views == nv].sort_values('iters')
-        ax.plot(g.iters, g.viol_kl, color=col, marker=mk, ms=2.6, mec='white', mew=0.3, lw=0.95,
-                label=f'{nv} views')
-    ax.axhline(1e-5, color=MUTED, lw=0.6, ls=(0, (3, 1.5)))
-    ax.text(128, 1.3e-5, '$10^{-5}$', fontsize=5.4, color=INK2, ha='right', va='bottom')
-    ax.set_xscale('log', base=2)
-    ax.set_yscale('log')
-    ax.set_xticks([1, 4, 16, 64])
-    ax.set_xticklabels(['1', '4', '16', '64'])
-    ax.set_ylim(1e-7, 0.3)
-    ax.set_xlabel('Sweeps')
-    ax.set_ylabel('Max. KL violation')
-    ax.set_title('(d) Convergence', loc='left', pad=11)
-    ax.legend(loc='upper right', fontsize=5.5, handlelength=1.1)
-    clean_ax(ax, grid_axis='y')
+    # (d) GPU runtime surface over lattice size N and number of views K (3D)
+    bv = pd.read_csv(os.path.join(RES, 'bench_views.csv'))
+    Ns = np.sort(bv.cells.unique())
+    Ks = np.sort(bv.views.unique())
+    T = bv.pivot(index='views', columns='cells', values='sec').loc[Ks, Ns].values      # K x N
+    LN, KK = np.meshgrid(np.log10(Ns), Ks)
+    LT = np.log10(T)
+    pos = axs[3].get_position()
+    axs[3].remove()
+    a3 = fig.add_axes([pos.x0 - 0.06, pos.y0 - 0.17, pos.width + 0.075, pos.height + 0.27], projection='3d',
+                      computed_zorder=False)
+    style_3d(a3, fs=6.2)
+    norm = Normalize(-2.0, 0.0)
+    a3.contourf(LN, KK, LT, levels=np.linspace(-2.0, 0.0, 9), zdir='z', offset=-2.0, cmap=SEQ, norm=norm,
+                alpha=0.7, zorder=0)
+    a3.plot_surface(LN, KK, LT, facecolors=SEQ(norm(LT)), rstride=1, cstride=1, linewidth=0.3,
+                    edgecolor=(1, 1, 1, 0.7), shade=False, zorder=2)
+    a3.plot(LN[1], KK[1], LT[1], color=CORAL, lw=1.1, zorder=4)               # K = 2, the setting of (c)
+    a3.set_xlim(np.log10(Ns[0]), np.log10(Ns[-1]))
+    a3.set_ylim(Ks[0], Ks[-1])
+    a3.set_zlim(-2.0, 0.0)
+    a3.set_xticks([4, 5, 6, 7])
+    a3.set_xticklabels(['$10^4$', '$10^5$', '$10^6$', '$10^7$'])
+    a3.set_yticks([1, 2, 4, 6])
+    a3.set_zticks([-2, -1, 0])
+    a3.set_zticklabels(['$10^{-2}$', '$10^{-1}$', '$10^{0}$'])
+    a3.set_xlabel('cells $N$')
+    a3.set_ylabel('views $K$')
+    a3.view_init(elev=24, azim=-128)
+    a3.set_box_aspect((1.25, 1.0, 0.8), zoom=1.0)
+    fig.text(pos.x0 - 0.02, 0.902, '(d) GPU time (s), $N\\times K$', fontsize=7.3, fontweight='bold', color=INK,
+             va='bottom')
+    slope = np.polyfit(Ks, T[:, -1], 1)[0]
+    fig.text(pos.x0 - 0.02, 0.86, f'{slope:.2f} s per view at $1.2\\times10^7$ cells', fontsize=5.6, color=INK2,
+             va='top')
+    fig.text(pos.x0 - 0.02, 0.80, '— $K=2$ (as in (c))', fontsize=5.6, color=CORAL, va='top')
 
     os.makedirs(FIG, exist_ok=True)
     os.makedirs(HIGH, exist_ok=True)

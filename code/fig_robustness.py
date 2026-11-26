@@ -1,7 +1,7 @@
-"""Figure 4: robustness, drawn at print size (7.0 x 1.85 in), one row of four panels.
+"""Figure 4: robustness, drawn at print size (7.0 x 2.0 in), one row of four panels.
 
 (a) hard coherence vs. soft aggregate penalty (CN31)
-(b) perturbed releases: rounding and Gaussian noise (CN31)
+(b) perturbed releases: rounding and Gaussian noise (CN31), 3D fences for five estimators
 (c) inconsistent release (sigma = 2%): cyclic vs. damped projection, max view residual per sweep
 (d) gauge weight lambda: WAPE change relative to post-hoc projection (CN31 and SD, 3 seeds)
 
@@ -13,14 +13,15 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.collections import PolyCollection
 
 from train import RES
 from plot_style import (SLATE, CORAL, SAGE, AMBER, INK, INK2, MUTED, CARD_TEAL, METHOD, TEXTWIDTH,
-                        apply_style, clean_ax, save)
+                        apply_style, clean_ax, style_3d, save)
 
 from paths import FIGS as FIG
 HIGH = FIG
-apply_style(6.5)
+apply_style(6.8)
 
 POSTHOC = {'cn31': 1.4392, 'sd': 19.232}   # 3-seed means of post-hoc projection (Table 2)
 
@@ -30,8 +31,9 @@ def draw():
     viol = json.load(open(os.path.join(RES, 'corrected_violations.json')))
     osc = pd.read_csv(os.path.join(RES, 'stress_oscillation.csv'))
 
-    fig, axs = plt.subplots(1, 4, figsize=(TEXTWIDTH, 1.85),
-                            gridspec_kw=dict(wspace=0.45, width_ratios=[1.05, 1.1, 1.0, 0.95]))
+    fig, axs = plt.subplots(1, 4, figsize=(TEXTWIDTH, 2.0),
+                            gridspec_kw=dict(wspace=0.5, width_ratios=[1.0, 1.32, 0.95, 0.88], left=0.06,
+                                             right=0.995, top=0.88, bottom=0.2))
 
     # (a) soft penalty vs hard coherence
     ax = axs[0]
@@ -69,31 +71,48 @@ def draw():
     ax.set_title('(a) Hard vs. soft coherence', loc='left')
     clean_ax(ax, grid_axis='y')
 
-    # (b) perturbed releases
-    ax = axs[1]
-    cats = [('round', 3, '3sf'), ('round', 2, '2sf'), ('noise', 0.001, '0.1'), ('noise', 0.005, '0.5'),
-            ('noise', 0.01, '1'), ('noise', 0.02, '2'), ('noise', 0.05, '5')]
+    # (b) perturbed releases: 3D fences, one per method, ordered front (lowest error) to back
+    pos = axs[1].get_position()
+    axs[1].remove()
+    a3 = fig.add_axes([pos.x0 - 0.045, pos.y0 - 0.16, pos.width + 0.075, pos.height + 0.26], projection='3d',
+                      computed_zorder=False)
+    style_3d(a3, fs=6.2)
+    cats = [('noise', 0.0, 'exact'), ('round', 3, '3sf'), ('round', 2, '2sf'), ('noise', 0.001, '0.1'),
+            ('noise', 0.005, '0.5'), ('noise', 0.01, '1'), ('noise', 0.02, '2'), ('noise', 0.05, '5')]
     rnd = {(r['fam'], r['sig_figs']): r for r in rm['stress_rounding'] if r['ds'] == 'cn31'}
     noi = {(r['fam'], round(r['sigma'], 4)): r for r in rm['stress_noise'] if r['ds'] == 'cn31'}
-    xpos = np.array([0, 1, 2.4, 3.4, 4.4, 5.4, 6.4])
-    for fam, key in [('Profile+proj', 'prof'), ('Post-hoc', 'posthoc'), ('GRANITE_cyclic', 'granite')]:
-        st = METHOD[key]
-        vals = [(rnd if kind == 'round' else noi)[(fam, v if kind == 'round' else round(v, 4))]['wape_mean']
-                for kind, v, _ in cats]
-        ax.plot(xpos[:2], vals[:2], color=st['color'], marker=st['marker'], ms=3.0, lw=0, mec='white', mew=0.35)
-        ax.plot(xpos[2:], vals[2:], color=st['color'], marker=st['marker'], ms=3.0, lw=1.0, mec='white', mew=0.35,
-                label=st['label'].replace(' + proj.', '').replace(' proj.', ''))
-    ax.axvline(1.7, color=GRID_C, lw=0.6)
-    ax.text(0.5, 6.15, 'rounding', fontsize=5.6, color=INK2, ha='center')
-    ax.text(4.4, 6.15, 'noise $\\sigma$ (%)', fontsize=5.6, color=INK2, ha='center')
-    ax.set_xlim(-0.6, 6.9)
-    ax.set_xticks(xpos)
-    ax.set_xticklabels([c[2] for c in cats], fontsize=5.6)
-    ax.set_ylim(0.9, 6.5)
-    ax.set_ylabel('CN31 test WAPE (%)')
-    ax.set_title('(b) Perturbed releases', loc='left')
-    ax.legend(loc='center left', bbox_to_anchor=(0.0, 0.62), fontsize=5.6, handlelength=1.2)
-    clean_ax(ax, grid_axis='y')
+    fams = [('GRANITE_cyclic', 'granite', 'GRANITE'), ('Post-hoc', 'posthoc', 'Post-hoc'),
+            ('Profile+proj', 'prof', 'Profile'), ('GBDT+proj', 'gbdt', 'GBDT'), ('MaxEnt', 'me', 'MaxEnt')]
+    xs = np.arange(len(cats), dtype=float)
+    for depth, (fam, key, nm) in list(enumerate(fams))[::-1]:          # back to front
+        col = METHOD[key]['color']
+        vals = np.array([(rnd if kind == 'round' else noi)[(fam, v if kind == 'round' else round(v, 4))]['wape_mean']
+                         for kind, v, _ in cats])
+        verts = [[(xs[0], 0)] + list(zip(xs, vals)) + [(xs[-1], 0)]]
+        pc = PolyCollection(verts, facecolors=[col], edgecolors=['none'], alpha=0.16)
+        pc.set_zorder(2 + 3 * (len(fams) - depth))
+        a3.add_collection3d(pc, zs=[depth], zdir='y')
+        a3.plot(xs, [depth] * len(xs), vals, color=col, lw=1.0, zorder=3 + 3 * (len(fams) - depth))
+        a3.scatter(xs, [depth] * len(xs), vals, color=col, marker=METHOD[key]['marker'], s=6, edgecolor='white',
+                   linewidth=0.3, depthshade=False, zorder=4 + 3 * (len(fams) - depth))
+    for xv in (0.5, 2.5):
+        a3.plot([xv, xv], [-0.5, len(fams) - 0.5], [0, 0], color='#C9CED6', lw=0.6, zorder=1)
+    a3.set_xlim(0, len(cats) - 1)
+    a3.set_ylim(-0.3, len(fams) - 0.7)
+    a3.set_zlim(0, 7)
+    a3.set_xticks(xs)
+    a3.set_xticklabels([c[2] for c in cats], fontsize=5.4)
+    a3.set_yticks([])
+    a3.set_zticks([0, 2, 4, 6])
+    a3.set_xlabel('rounding | noise $\\sigma$ (%)')
+    a3.view_init(elev=22, azim=-58)
+    a3.set_box_aspect((1.75, 1.0, 0.85), zoom=1.08)
+    fig.text(pos.x0 - 0.02, 0.902, '(b) Perturbed releases: CN31 WAPE (%)', fontsize=7.3, fontweight='bold', color=INK,
+             va='bottom')
+    hs = [plt.Line2D([], [], color=METHOD[k]['color'], marker=METHOD[k]['marker'], ms=2.8, lw=1.0, mec='white',
+                     mew=0.3, label=nm) for _, k, nm in fams]
+    fig.legend(handles=hs, loc='upper left', bbox_to_anchor=(pos.x0 - 0.025, 0.875), ncol=5, fontsize=5.5,
+               handlelength=1.0, handletextpad=0.25, columnspacing=0.45, borderaxespad=0.0)
 
     # (c) inconsistent release: cyclic vs damped residual
     ax = axs[2]

@@ -22,11 +22,11 @@ cyclic I-projection (IPF) for non-negative quantities and cyclic affine projecti
 | `code/eval_sub.py`, `code/eval_proj.py` | Re-evaluate a trained model on a county subset, or with the full projection (N²-Norm) |
 | `code/downstream.py` | Energy-economics queries: peak, ramp, load factor, capture price, value factor, non-positive prices, arbitrage, clipping |
 | `code/bench.py` | Scalability and convergence benchmark of the coherence layer (GPU vs. CPU vs. SCS/OSQP) |
+| `code/bench_views.py` | GPU runtime of the layer over lattice size N and number of views K (`results/bench_views.csv`, Figure 5d) |
 | `code/prep_*.py` | Benchmark construction from the raw sources |
 | `code/runner.py`, `code/run_rob_queue.py`, `code/jobs_*.txt` | Resumable job queues covering every run in the paper and appendix |
 | `code/sd_pooled_bootstrap.py` | Market-day bootstrap of the pooled SD-Price WAPE difference (the CI reported in Section 6.2) |
-| `code/make_tables.py`, `code/fig_*.py`, `code/plot_style.py` | LaTeX tables of the paper and technical report (`tables/`) and figures (`figs/`), drawn at print size |
-| `code/fonts/` | Linux Biolinum (TrueType), the sans-serif face of the ACM/PVLDB template, used by the figures; SIL Open Font License / GPL with font exception |
+| `code/make_tables.py`, `code/fig_*.py`, `code/plot_style.py` | LaTeX tables of the paper and technical report (`tables/`) and figures (`figs/`), drawn at print size in Times New Roman with STIX math (a system font, not redistributed; Liberation Serif, TeX Gyre Termes or Nimbus Roman is used where it is missing). The 3D panels use matplotlib's mplot3d; Figure 2c reads the cached `results/strata_cn31_hour_month.csv` |
 | `docs/GRANITE_technical_report.pdf` | Technical report cited by the paper: SQL form of a sweep, derivations, stratified tests, full robustness tables |
 | `code/paths.py` | Repository-relative directories; raw sources are read from environment variables |
 | `results/` | Result JSON for every run (arguments, test metrics, training curves), plus audit, robustness, benchmark, and downstream CSVs; `ensemble_metrics.json` caches the 3-seed ensemble metrics so that `make_tables.py` reproduces every table without the per-cell predictions |
@@ -74,6 +74,7 @@ python runner.py jobs_polish_cpu4.txt 1 # validation runs for ridge and TS-GHI G
 python runner.py jobs_polish_cpu5.txt 1 # release designs with the GBDT variant selected for CN31
 python runner.py jobs_polish_gpu2.txt 1 # TS-GHI extra seeds: N2-Norm (raw, projected), unconstrained
 python bench.py                        # scalability of the coherence layer
+python bench_views.py                  # runtime over cells N x views K
 python downstream.py cn31 && python downstream.py sd && python downstream.py ghi
 python run_rob_queue.py jobs_rob_train.txt 1 && python run_rob_queue.py jobs_rob_ext.txt 1
 python audit_and_strata.py && python sd_pooled_bootstrap.py && python robustness_stress.py && python summarize_robustness.py

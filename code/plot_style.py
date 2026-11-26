@@ -1,26 +1,26 @@
 """Shared figure style for the GRANITE paper.
 
 Figures are drawn at their printed size (PVLDB/acmart: text width 7.0 in, column width 3.33 in), so font sizes
-below are the sizes that appear in print. Text uses Linux Biolinum, the sans-serif face of the acmart template,
-embedded as TrueType (Type 42). Every method has one fixed color and marker across all figures (METHOD).
+below are the sizes that appear in print. Text is set in Times New Roman with STIX (Times-compatible) math and is
+embedded as TrueType (Type 42). Times New Roman is a system font and is not redistributed here; where it is
+missing, a metric-compatible free face (Liberation Serif, TeX Gyre Termes, Nimbus Roman) is used instead.
+Every method has one fixed color and marker across all figures (METHOD). The five categorical hues pass the
+lightness, chroma, color-vision-deficiency and contrast checks of a palette validator, and every series also
+carries a distinct marker or a direct label.
 """
-import glob
-import os
-
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib import font_manager
-from matplotlib.patches import FancyBboxPatch
+from matplotlib.patches import FancyBboxPatch, Polygon
 
 TEXTWIDTH = 7.0     # inches, acmart sigconf \textwidth
 COLWIDTH = 3.33     # inches, acmart sigconf \columnwidth
 
-# Colorblind-safe palette (Okabe-Ito hues, slightly deepened for print)
-SLATE = '#2B5C8A'   # GRANITE
+# Colorblind-safe categorical palette (Okabe-Ito hues, deepened for print)
+SLATE = '#1F5FA6'   # GRANITE
 CORAL = '#D55E00'   # post-hoc projection
 SAGE = '#009E73'    # MaxEnt / exact coherence
-AMBER = '#C98A00'   # profile seed
+AMBER = '#B98000'   # profile seed
 IRIS = '#7B5EA7'    # GBDT / l2 geometry
 SKY = '#56B4E9'     # secondary accent
 INK = '#1B1F24'     # text, ground truth
@@ -35,6 +35,10 @@ CARD_CORAL = '#FCEEE6'
 CARD_IRIS = '#F1EDF7'
 CARD_GRAY = '#F4F5F7'
 
+# Sequential (one hue, light to dark) and diverging (two hues, gray midpoint) ramps
+SEQ_BLUE = ['#E3EDF7', '#A9C7E6', '#5B92CC', '#1F5FA6', '#0D3463']
+DIV_GAIN = ['#C4501A', '#EDB48F', '#F2F2F0', '#93B9E0', '#1F5FA6', '#0D3463']
+
 # One style per method, used by every figure.
 METHOD = {
     'granite': dict(color=SLATE, marker='o', label='GRANITE'),
@@ -46,24 +50,14 @@ METHOD = {
     'truth': dict(color=INK, marker=None, label='Truth'),
 }
 
-_FONT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fonts')
-_FAMILY = 'DejaVu Sans'
-for _f in glob.glob(os.path.join(_FONT_DIR, '*.ttf')):
-    font_manager.fontManager.addfont(_f)
-    _FAMILY = 'Linux Biolinum O'
+SERIF = ['Times New Roman', 'Liberation Serif', 'TeX Gyre Termes', 'Nimbus Roman', 'DejaVu Serif']
 
 
 def apply_style(base_size=7.0):
     plt.rcParams.update({
-        'font.family': 'sans-serif',
-        'font.sans-serif': [_FAMILY, 'DejaVu Sans'],
-        'mathtext.fontset': 'custom',
-        'mathtext.rm': _FAMILY,
-        'mathtext.it': f'{_FAMILY}:italic',
-        'mathtext.bf': f'{_FAMILY}:bold',
-        'mathtext.sf': _FAMILY,
-        'mathtext.cal': 'cmsy10',        # TeX calligraphic (the default 'cursive' resolves to Comic Sans)
-        'mathtext.fallback': 'stixsans',
+        'font.family': 'serif',
+        'font.serif': SERIF,
+        'mathtext.fontset': 'stix',     # Times-compatible math
         'font.size': base_size,
         'axes.titlesize': base_size + 0.5,
         'axes.titleweight': 'bold',
@@ -106,6 +100,22 @@ def clean_ax(ax, grid_axis='y'):
     ax.tick_params(length=2.4, width=0.55)
 
 
+def style_3d(ax, fs=6.0, pad=-3.5):
+    """Light panes, hairline grid and tight tick labels for a print-size mplot3d axis."""
+    for axis in (ax.xaxis, ax.yaxis, ax.zaxis):
+        axis.set_pane_color((0.975, 0.98, 0.985, 1.0))
+        axis.pane.set_edgecolor('#C9CED6')
+        axis.pane.set_linewidth(0.4)
+        axis._axinfo['grid'].update(color=GRID, linewidth=0.4)
+        axis._axinfo['tick'].update(inward_factor=0.0, outward_factor=0.25)
+        axis.line.set_linewidth(0.5)
+        axis.line.set_color(INK2)
+        axis.set_tick_params(labelsize=fs - 0.6, pad=pad, colors=INK2, labelcolor=INK)
+        axis.label.set_size(fs)
+        axis.labelpad = pad + 1.0
+    ax.set_facecolor('none')
+
+
 def panel_title(ax, text, x=0.0, y=1.0, **kw):
     """Left-aligned bold panel title, e.g. '(a) ...'."""
     ax.set_title(text, loc='left', x=x, y=y, **kw)
@@ -139,6 +149,24 @@ def pill_badge(ax, x, y, text, fc='white', ec=SLATE, tc=INK, fs=6.3, fw='bold',
     return ax.text(x, y, text, fontsize=fs, fontweight=fw, color=tc, ha=ha, va=va, zorder=zorder,
                    bbox=dict(boxstyle=f'round,pad={pad}', facecolor=fc, edgecolor=ec, linewidth=0.6, alpha=alpha),
                    **kw)
+
+
+# ---------------------------------------------------------------- isometric (oblique) 3D drawing in 2D axes
+def iso(x, y, z, ox=0.0, oy=0.0, sx=1.0, sy=1.0, depth=(0.55, 0.42)):
+    """Oblique projection of a 3D point onto 2D data coordinates: x right, z up, y receding up-right."""
+    return ox + sx * (x + depth[0] * y), oy + sy * (z + depth[1] * y)
+
+
+def iso_box(ax, x0, y0, z0, dx, dy, dz, fc_top, fc_front, fc_side, ec=INK2, lw=0.4, zorder=4, alpha=1.0,
+            **proj):
+    """Draw a solid box (three visible faces) with its front-bottom-left corner at (x0, y0, z0)."""
+    P = lambda x, y, z: iso(x, y, z, **proj)
+    front = [P(x0, y0, z0), P(x0 + dx, y0, z0), P(x0 + dx, y0, z0 + dz), P(x0, y0, z0 + dz)]
+    side = [P(x0 + dx, y0, z0), P(x0 + dx, y0 + dy, z0), P(x0 + dx, y0 + dy, z0 + dz), P(x0 + dx, y0, z0 + dz)]
+    top = [P(x0, y0, z0 + dz), P(x0 + dx, y0, z0 + dz), P(x0 + dx, y0 + dy, z0 + dz), P(x0, y0 + dy, z0 + dz)]
+    for poly, fc in ((front, fc_front), (side, fc_side), (top, fc_top)):
+        ax.add_patch(Polygon(poly, closed=True, fc=fc, ec=ec, lw=lw, zorder=zorder, alpha=alpha,
+                             joinstyle='round'))
 
 
 def save(fig, pdf_path, png_path=None):

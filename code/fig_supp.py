@@ -107,8 +107,35 @@ def draw_oscillation():
     plt.close(fig)
 
 
+def draw_convergence():
+    """Max KL and l2 violation per sweep for the synthetic two- and three-view releases of bench.py."""
+    conv = pd.read_csv(os.path.join(RES, 'bench_convergence.csv'))
+    fig, ax = plt.subplots(figsize=(3.33, 1.75))
+    for nv, col, mk in [(2, SLATE, 'o'), (3, SAGE, 's')]:
+        g = conv[conv.views == nv].sort_values('iters')
+        ax.plot(g.iters, g.viol_kl, color=col, marker=mk, ms=3.0, mec='white', mew=0.35, lw=1.0,
+                label=f'KL, {nv} views')
+        ax.plot(g.iters, g.viol_l2, color=col, marker=mk, ms=2.6, mfc='white', mew=0.6, lw=0.8,
+                ls=(0, (3, 1.5)), label=f'$\\ell_2$, {nv} views')
+    ax.axhline(1e-5, color='#9AA3AF', lw=0.6, ls=(0, (3, 1.5)))
+    ax.text(128, 1.3e-5, '$10^{-5}$', fontsize=6.0, color=INK2, ha='right', va='bottom')
+    ax.set_xscale('log', base=2)
+    ax.set_yscale('log')
+    ax.set_xticks([1, 4, 16, 64])
+    ax.set_xticklabels(['1', '4', '16', '64'])
+    ax.set_ylim(1e-7, 0.3)
+    ax.set_xlabel('Projection sweeps')
+    ax.set_ylabel('Max. relative violation')
+    clean_ax(ax, grid_axis='y')
+    ax.legend(fontsize=6.0, ncol=2, loc='upper right', handlelength=1.6, columnspacing=0.8)
+    fig.savefig(os.path.join(FIG, 'supp_convergence.pdf'), bbox_inches='tight')
+    fig.savefig(os.path.join(HIGH, 'supp_convergence.png'), bbox_inches='tight', dpi=300)
+    plt.close(fig)
+
+
 if __name__ == '__main__':
     draw_cn31_heatmap()
     draw_sd_breakdown()
     draw_oscillation()
+    draw_convergence()
     print("Saved supplementary figures")

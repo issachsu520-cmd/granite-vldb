@@ -128,17 +128,87 @@ def l2_project(x, views, iters=10):
 
 
 def violation(x, views):
-    """Max relative violation over all observed aggregates."""
+    """Max relative violation over all observed, non-empty aggregate groups."""
     worst = 0.0
+    for v in views:
+        valid_g = v['cnt'] > 0
+        if not valid_g.any():
+            continue
+        g = v['gid'].reshape(-1)
+        sel = g >= 0
+        G = v['val'].numel()
+        s = torch.zeros(G, device=x.device, dtype=torch.float64).index_add(0, g[sel], x.reshape(-1)[sel].double())
+        t = sum_target(v).double()
+        if v['sem'] == 'sum':
+            den = t.abs().clamp_min(1e-9 * t[valid_g].abs().mean().item() + 1e-12)
+        else:
+            mt = mean_target(v).double()
+            den = v['cnt'].double() * mt[valid_g].abs().mean().clamp_min(1e-12)
+        worst = max(worst, ((s[valid_g] - t[valid_g]).abs() / den[valid_g]).max().item())
+    return worst
+
+
+def total_weighted_violation(x, views):
+    """Total-weighted relative violation sum|Ax - s| / sum|s| across all views."""
+    num, den = 0.0, 0.0
     for v in views:
         g = v['gid'].reshape(-1)
         sel = g >= 0
         G = v['val'].numel()
         s = torch.zeros(G, device=x.device, dtype=torch.float64).index_add(0, g[sel], x.reshape(-1)[sel].double())
         t = sum_target(v).double()
-        den = t.abs().clamp_min(1e-9 * t.abs().mean().item() + 1e-12) if v['sem'] == 'sum' else (v['cnt'].double() * t.abs().mean())
-        worst = max(worst, ((s - t).abs() / den).max().item())
-    return worst
+        num += (s - t).abs().sum().item()
+        den += t.abs().sum().item()
+    return num / max(den, 1e-12)
+
+
+def kl_project_damped(z, views, iters=50, alpha=0.5, tol=0.0, eps=1e-6):
+    """Damped / tolerance-band KL projection for noisy or inconsistent releases.
+
+    Each view update moves a fraction alpha toward the target (with optional relative
+    deadzone tol around log target), preventing limit-cycle divergence when C is empty."""
+    shp = z.shape
+    z = z.reshape(-1)
+    prep = []
+    for v in views:
+        g = v['gid'].reshape(-1)
+        sel = (g >= 0).nonzero(as_tuple=True)[0]
+        tgt = sum_target(v)
+        scale = tgt.abs().mean().clamp_min(1e-12)
+        prep.append((sel, g[sel], torch.log(tgt.clamp_min(eps * scale)), tgt.numel()))
+    log_tol = math.log1p(tol) if tol > 0 else 0.0
+    for _ in range(iters):
+        for sel, idx, logt, G in prep:
+            zs = z[sel]
+            lse = _scatter_lse(zs, idx, G)
+            diff = logt - lse
+            if log_tol > 0:
+                diff = torch.sign(diff) * (diff.abs() - log_tol).clamp_min(0.0)
+            z = z.index_put((sel,), zs + alpha * diff[idx])
+    return z.reshape(shp)
+
+
+def l2_project_damped(x, views, iters=50, alpha=0.5, tol=0.0):
+    """Damped / tolerance-band Euclidean projection for noisy or inconsistent signed releases."""
+    shp = x.shape
+    x = x.reshape(-1)
+    prep = []
+    for v in views:
+        g = v['gid'].reshape(-1)
+        sel = (g >= 0).nonzero(as_tuple=True)[0]
+        cnt = torch.zeros(v['val'].numel(), device=x.device).index_add(0, g[sel], torch.ones_like(sel, dtype=x.dtype))
+        mt = mean_target(v)
+        scale = mt.abs().mean().clamp_min(1e-6)
+        prep.append((sel, g[sel], mt, cnt.clamp_min(1), tol * scale))
+    for _ in range(iters):
+        for sel, idx, tmean, cnt, band in prep:
+            xs = x[sel]
+            gm = torch.zeros_like(tmean).index_add(0, idx, xs) / cnt
+            diff = tmean - gm
+            if band > 0:
+                diff = torch.sign(diff) * (diff.abs() - band).clamp_min(0.0)
+            x = x.index_put((sel,), xs + alpha * diff[idx])
+    return x.reshape(shp)
 
 
 def max_entropy(views, mask, geometry, iters=50):

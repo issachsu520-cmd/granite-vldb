@@ -1,0 +1,14 @@
+train.py --ds cn31 --variant granite --lam 0.3 --tag _lam0.3 --seed 1
+train.py --ds cn31 --variant granite --lam 0.3 --tag _lam0.3 --seed 2
+train.py --ds sd --variant granite --lam 0.3 --tag _lam0.3 --seed 1
+train.py --ds sd --variant granite --lam 0.3 --tag _lam0.3 --seed 2
+train.py --ds sd --variant granite --lam 3 --tag _lam3 --seed 1
+train.py --ds sd --variant granite --lam 3 --tag _lam3 --seed 2
+train.py --ds cn31 --variant granite --iters 1 --tag _it1 --seed 0
+train.py --ds cn31 --variant granite --iters 2 --tag _it2 --seed 0
+train.py --ds cn31 --variant granite --iters 4 --tag _it4 --seed 0
+train.py --ds cn31 --variant granite --iters 16 --tag _it16 --seed 0
+train.py --ds sd --variant granite --iters 1 --tag _it1 --seed 0
+train.py --ds sd --variant granite --iters 2 --tag _it2 --seed 0
+train.py --ds sd --variant granite --iters 4 --tag _it4 --seed 0
+train.py --ds sd --variant granite --iters 16 --tag _it16 --seed 0

@@ -6,19 +6,22 @@ SD-Price  (per market-month):   solar capture price, value factor, share of non-
                                  arbitrage revenue of a 1 MW / 2 MWh battery.
 TS-GHI    (per township-month): peak irradiance, DC/AC-1.3 inverter clipping share, max ramp.
 """
+from paths import DATA
 import glob, json, os, sys
 import numpy as np, pandas as pd
 from train import get_ds, eval_specs, RES
-from paths import DATA
 from make_tables import FAMILIES, best_variant  # Ridge / GBDT variant selected on validation
 
-METHODS = {'cn31': ['me', 'prof', 'lr', 'gbdt', 'none', 'posthoc', 'n2', 'n2proj', 'granite'],
-           'sd': ['me', 'prof', 'lr', 'gbdt', 'none', 'posthoc', 'n2', 'n2proj', 'granite'],
+METHODS = {'cn31': ['me', 'prof', 'lr', 'gbdt', 'none', 'posthoc', 'n2', 'n2proj', 'granite', 'gval'],
+           'sd': ['me', 'prof', 'lr', 'gbdt', 'none', 'posthoc', 'n2', 'n2proj', 'granite', 'gval'],
            'ghi': ['me', 'clear', 'gbdt', 'none', 'posthoc', 'n2', 'granite']}
+GVAL_MAP = {'cn31': 'granite_lam3', 'sd': 'e2e'}
 
 
 def load_preds(ds_name, method, seed=0):
     sub = '_c300' if ds_name == 'ghi' else ''
+    if method == 'gval':
+        method = GVAL_MAP.get(ds_name, 'granite')
     p = os.path.join(RES, f"{ds_name}_{method}{sub}_s{seed}_pred.npy")
     return np.load(p, allow_pickle=True) if os.path.exists(p) else None
 

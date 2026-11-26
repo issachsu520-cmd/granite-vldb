@@ -12,20 +12,28 @@ cyclic I-projection (IPF) for non-negative quantities and cyclic affine projecti
 
 | Path | Content |
 |---|---|
-| `code/granite.py` | Coherence layer (`kl_project`, `l2_project`), max-entropy anchor, the GRANITE network, losses |
+| `code/granite.py` | Coherence layer (`kl_project`, `l2_project`, `kl_project_damped`, `l2_project_damped`), max-entropy anchor, the GRANITE network, losses |
+| `code/backbones.py` | Plug-in ResNet-1D (TCN) and BiGRU backbones reusing GRANITE's features and coherence layer |
 | `code/data.py` | Block builders and release views for CN31-Load, SD-Price, TS-GHI |
 | `code/train.py` | Training and evaluation of GRANITE and its neural variants (`--variant granite\|posthoc\|none\|n2\|e2e\|nochmp\|noent\|notemp`) |
 | `code/baselines.py` | Coherent baselines: MaxEnt/min-norm, profile, solar geometry; ridge and GBDT regressors, raw or residual target |
+| `code/audit_and_strata.py` | Corrected violation audit (`avg`-view denominator + missing-day fix), stratified subgroup WAPE, block bootstrap CIs & Wilcoxon tests |
+| `code/robustness_stress.py`, `code/robustness_train.py`, `code/summarize_robustness.py` | Stress tests (noise, rounding, partial views, cyclic vs. damped/tol-band) and GPU runs (soft-penalty Pareto, backbones, $\lambda$, $I_{\text{train}}$, horizon) |
 | `code/eval_sub.py`, `code/eval_proj.py` | Re-evaluate a trained model on a county subset, or with the full projection (N²-Norm) |
 | `code/downstream.py` | Energy-economics queries: peak, ramp, load factor, capture price, value factor, non-positive prices, arbitrage, clipping |
 | `code/bench.py` | Scalability and convergence benchmark of the coherence layer (GPU vs. CPU vs. SCS/OSQP) |
 | `code/prep_*.py` | Benchmark construction from the raw sources |
-| `code/runner.py`, `code/jobs_*.txt` | Resumable job queues covering every run in the paper |
-| `code/make_tables.py`, `code/fig_*.py` | Paper tables (`tables/`) and figures (`figs/`) |
+| `code/runner.py`, `code/run_rob_queue.py`, `code/jobs_*.txt` | Resumable job queues covering every run in the paper and appendix |
+| `code/sd_pooled_bootstrap.py` | Market-day bootstrap of the pooled SD-Price WAPE difference (the CI reported in Section 6.2) |
+| `code/make_tables.py`, `code/fig_*.py`, `code/plot_style.py` | LaTeX tables of the paper and technical report (`tables/`) and figures (`figs/`), drawn at print size |
+| `code/fonts/` | Linux Biolinum (TrueType), the sans-serif face of the ACM/PVLDB template, used by the figures; SIL Open Font License / GPL with font exception |
+| `docs/GRANITE_technical_report.pdf` | Technical report cited by the paper: SQL form of a sweep, derivations, stratified tests, full robustness tables |
 | `code/paths.py` | Repository-relative directories; raw sources are read from environment variables |
-| `results/` | Result JSON for every run (arguments, test metrics, training curves), plus benchmark and downstream CSVs |
+| `results/` | Result JSON for every run (arguments, test metrics, training curves), plus audit, robustness, benchmark, and downstream CSVs; `ensemble_metrics.json` caches the 3-seed ensemble metrics so that `make_tables.py` reproduces every table without the per-cell predictions |
 
 Model checkpoints and per-cell predictions are not included; they can be regenerated with the job queues.
+With only this repository, `python make_tables.py` in `code/` regenerates every table of the paper and the technical
+report from `results/`.
 
 ## Data
 
@@ -36,8 +44,8 @@ the path in an environment variable and writes the benchmark arrays to `data/`.
 |---|---|---|---|
 | CN31-Load | Hourly load of 31 Chinese provinces, 2015–2024: B. Yi et al., *Scientific Data* (2026), doi:10.1038/s41597-026-07327-8 (workbook `Data output.xlsx`) | `CN31_XLSX` | `prep_cn31_sd.py` |
 | SD-Price | Shandong day-ahead / real-time hourly prices parsed from the exchange's daily reports (CSV); NASA POWER hourly weather for 16 city centres (https://power.larc.nasa.gov/) | `SD_PRICES_CSV`, `SD_WEATHER_CSV` | `prep_cn31_sd.py` |
-| TS-GHI | Township-level hourly surface shortwave radiation, 54 monthly shapefiles (J/m² accumulated since 00 UTC) | `TOWNSHIP_SHP_DIR` | `prep_township_driver.py`, `prep_centroids.py`, `prep_clim.py` |
-| Map figure | Natural Earth admin-1 boundaries (`ne_10m_admin_1_states_provinces.shp`) | `NATURALEARTH_ADMIN1` | `fig_map.py` |
+| TS-GHI | Township-level hourly downward surface shortwave radiation for 43,656 townships, January 2022 to June 2026, 54 monthly shapefiles (J/m² accumulated since 00 UTC, the ERA5-Land convention). Compiled and distributed by the data-sharing outlet Lifang Shuju Xueshe (WeChat public account); the compiler states neither its upstream product nor a license, so only scripts and derived statistics are shared here | `TOWNSHIP_SHP_DIR` | `prep_township_driver.py`, `prep_centroids.py`, `prep_clim.py` |
+| Legacy map figure | Natural Earth admin-1 boundaries (`ne_10m_admin_1_states_provinces.shp`), used only by the unused `fig_map.py`; the paper's Figure 2 plots township centroids without boundaries | `NATURALEARTH_ADMIN1` | `fig_map.py` |
 
 `prep_township_driver.py` processes one month per process (it is resumable) and writes
 `data/township/ghi_f16.npy` (43,656 × 39,408, float16) with metadata, centroids and a validity mask.
@@ -67,13 +75,15 @@ python runner.py jobs_polish_cpu5.txt 1 # release designs with the GBDT variant 
 python runner.py jobs_polish_gpu2.txt 1 # TS-GHI extra seeds: N2-Norm (raw, projected), unconstrained
 python bench.py                        # scalability of the coherence layer
 python downstream.py cn31 && python downstream.py sd && python downstream.py ghi
-python make_tables.py && python fig_case.py && python fig_scale.py && python fig_map.py
+python run_rob_queue.py jobs_rob_train.txt 1 && python run_rob_queue.py jobs_rob_ext.txt 1
+python audit_and_strata.py && python sd_pooled_bootstrap.py && python robustness_stress.py && python summarize_robustness.py
+python make_tables.py && python fig_framework.py && python fig_spatial_strata.py && python fig_case.py && python fig_robustness.py && python fig_views_scale.py && python fig_supp.py
 ```
 
-`runner.py` skips every job whose result JSON already exists in `results/`, so the queues can be interrupted
+`runner.py` and `run_rob_queue.py` skip every job whose result JSON already exists in `results/`, so the queues can be interrupted
 and resumed. All experiments in the paper ran on one 16 GB GPU (NVIDIA RTX 5070 Ti) and a desktop CPU.
 
 ## Environment
 
-Python 3.14, PyTorch 2.11 (CUDA 12.8), NumPy 2.5, pandas 2.3, scikit-learn 1.8, pyshp 3.0, CVXPY 1.8
+Python 3.14, PyTorch 2.11 (CUDA 12.8), NumPy 2.5, pandas 2.3, scikit-learn 1.8, SciPy 1.14, pyshp 3.0, CVXPY 1.8
 (SCS 3.2, OSQP 1.1), matplotlib 3.10, openpyxl 3.1. See `requirements.txt`.

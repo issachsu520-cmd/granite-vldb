@@ -1,0 +1,30 @@
+{
+ "granite_vs_posthoc": {
+  "n_market_days": 459,
+  "seeds": [
+   3,
+   3
+  ],
+  "wape_granite": 19.38,
+  "wape_other": 19.232,
+  "diff_pp": 0.149,
+  "ci95": [
+   -0.029,
+   0.334
+  ]
+ },
+ "granite_vs_n2proj": {
+  "n_market_days": 459,
+  "seeds": [
+   3,
+   3
+  ],
+  "wape_granite": 19.38,
+  "wape_other": 19.368,
+  "diff_pp": 0.012,
+  "ci95": [
+   -0.175,
+   0.198
+  ]
+ }
+}
